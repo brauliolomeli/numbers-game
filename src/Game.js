@@ -32,6 +32,7 @@ const DoneFrame = (props) => {
     return (
         <div className="text-center">
             <h2>{props.doneStatus}</h2>
+            <button className="btn btn-secondary" onClick={props.resetGame}>Play Again</button>
         </div>
     );
 }
@@ -109,14 +110,15 @@ Numbers.list = Array(9).fill(0);
 
 class Game extends Component {
     static randomNumber = () => 1 + Math.floor(Math.random() * 9)
-    state = {
+    static initialState = () => ({
         selectedNumbers: [],
         numOfStars: Game.randomNumber(),
         answerIsCorrect: null,
         usedNumbers: [],
         redraws: 10,
         doneStatus: null
-    };
+    });
+    state = Game.initialState();
     selectNumber = (clickedNumber) => {
         if(this.state.selectedNumbers.indexOf(clickedNumber) >= 0){ return; }
         this.setState(prevState => ({
@@ -167,6 +169,7 @@ class Game extends Component {
             .filter(n => usedNumbers.indexOf(n) === -1);
         return possibleCombinationSum(possibleNumbers, numberOfStars);
     }
+    resetGame = () => this.setState(Game.initialState());
     render() {
         const {selectedNumbers, numOfStars, answerIsCorrect, usedNumbers, redraws, doneStatus} = this.state;
         return (
@@ -185,7 +188,7 @@ class Game extends Component {
                         unselectNumber={this.unselectNumber} />
                 </div>
                 {doneStatus ?
-                    <DoneFrame doneStatus={doneStatus}/>
+                    <DoneFrame doneStatus={doneStatus} resetGame={this.resetGame}/>
                 :
                     <Numbers selectedNumbers={selectedNumbers} 
                         selectNumber={this.selectNumber}
